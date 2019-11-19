@@ -27,6 +27,17 @@ class TabMenuItemCell: UICollectionViewCell {
 
     var decorationView: UIView?
 
+    private let borderView: UIView = {
+        let v = UIView()
+        
+        v.backgroundColor = .clear
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.layer.borderWidth = 1.0
+        v.layer.cornerRadius = 4
+
+        return v
+    }()
+    
     var isDecorationHidden: Bool = true {
         didSet {
             guard let options = options, options.isInfinite else {
@@ -66,6 +77,7 @@ class TabMenuItemCell: UICollectionViewCell {
         self.backgroundColor = .clear
 
         self.contentView.addSubview(self.itemLabel)
+        self.contentView.addSubview(self.borderView)
         self.itemLabel.translatesAutoresizingMaskIntoConstraints = false
         self.itemLabel.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor).isActive = true
         self.itemLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor).isActive = true
@@ -77,10 +89,21 @@ class TabMenuItemCell: UICollectionViewCell {
 
     func configure(title: String, options: PageMenuOptions) {
         self.options = options
-        self.itemLabel.font = options.font
         self.itemLabel.text = title
         self.itemLabel.invalidateIntrinsicContentSize()
         self.invalidateIntrinsicContentSize()
+        
+        switch options.menuCursor {
+        case .underline:
+            borderView.isHidden = true
+        case .roundRect:
+            borderView.isHidden = false
+
+            borderView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+            borderView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+            borderView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1, constant: -6).isActive = true
+            borderView.heightAnchor.constraint(equalToConstant: options.menuCursor.height).isActive = true
+        }
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
@@ -125,6 +148,12 @@ extension TabMenuItemCell {
             return
         }
 
+        borderView.layer.borderColor = UIColor.interpolate(
+            from: options.menuBorderColor,
+            to: options.menuBorderSelectedColor,
+            with: progress).cgColor
+             
+        self.itemLabel.font = options.menuTitleSelectedFont
         self.itemLabel.textColor = UIColor.interpolate(
             from: options.menuTitleColor,
             to: options.menuTitleSelectedColor,
@@ -136,6 +165,12 @@ extension TabMenuItemCell {
             return
         }
 
+        borderView.layer.borderColor = UIColor.interpolate(
+            from: options.menuBorderSelectedColor,
+            to: options.menuBorderColor,
+            with: progress).cgColor
+        
+        self.itemLabel.font = options.menuTitleFont
         self.itemLabel.textColor = UIColor.interpolate(
             from: options.menuTitleSelectedColor,
             to: options.menuTitleColor,
