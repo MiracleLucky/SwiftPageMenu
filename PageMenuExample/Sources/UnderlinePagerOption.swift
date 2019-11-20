@@ -10,6 +10,13 @@ import Foundation
 import SwiftPageMenu
 
 struct UnderlinePagerOption: PageMenuOptions {
+    var menuTitleFont: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    
+    var menuTitleSelectedFont: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    
+    var menuBorderColor: UIColor = Theme.mainColor
+    
+    var menuBorderSelectedColor: UIColor = Theme.mainColor
 
     var isInfinite: Bool = false
 
